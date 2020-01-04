@@ -23,15 +23,15 @@ namespace ui
         private void button1_Click(object sender, EventArgs e)
         {
             Image srcImage = Image.FromFile("test.png");
-            int newWidth = 1;
-            int newHeight = 1;
+            int newWidth = 2;
+            int newHeight = 2;
             Bitmap srcBitmap = new Bitmap(srcImage);
             Bitmap dstBitmap = new Bitmap(newWidth, newHeight);
-
             BitmapData srcData = srcBitmap.LockBits(
                 new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height), 
                 ImageLockMode.ReadOnly, 
                 PixelFormat.Format32bppArgb);
+            
             BitmapData dstData = dstBitmap.LockBits(
                 new Rectangle(0, 0, dstBitmap.Width, dstBitmap.Height), 
                 ImageLockMode.WriteOnly, 
@@ -40,8 +40,8 @@ namespace ui
             {
                 byte* srcPtr = (byte*)srcData.Scan0;
                 byte* dstPtr = (byte*)dstData.Scan0;
-                interpolateAsm(srcPtr, dstPtr, srcBitmap.Width, 
-                    srcBitmap.Height, newWidth, newHeight);
+                interpolateAsm(srcPtr, dstPtr, 2, 
+                    2, 4, 4);
             }
             srcBitmap.UnlockBits(srcData);
             dstBitmap.UnlockBits(dstData);
@@ -85,7 +85,9 @@ namespace ui
         [DllImport("library_empty.dll")]
         public static extern unsafe int interpolate(byte* src);
         [DllImport("library_empty.dll")]
-        public static extern unsafe int interpolateAsm(byte* src, byte* dst, int width, int height, int newWidth, int newHeight);
+        public static extern unsafe int interpolateC(byte* src, byte* dst, int width, long height, long newWidth, long newHeight);
+        [DllImport("library_empty.dll")]
+        public static extern unsafe int interpolateAsm(byte* src, byte* dst, int width, long height, long newWidth, long newHeight);
 
         private void button2_Click(object sender, EventArgs e)
         {
