@@ -2,3 +2,4 @@ LIBRARY
 EXPORTS
 zwrocNumber
 zwrocPiksel
+interpolateAsm

@@ -40,7 +40,7 @@ namespace ui
             {
                 byte* srcPtr = (byte*)srcData.Scan0;
                 byte* dstPtr = (byte*)dstData.Scan0;
-                interpolateC(srcPtr, dstPtr, srcBitmap.Width, 
+                interpolateAsm(srcPtr, dstPtr, srcBitmap.Width, 
                     srcBitmap.Height, newWidth, newHeight);
             }
             srcBitmap.UnlockBits(srcData);
@@ -85,7 +85,7 @@ namespace ui
         [DllImport("library_empty.dll")]
         public static extern unsafe int interpolate(byte* src);
         [DllImport("library_empty.dll")]
-        public static extern unsafe int interpolateC(byte* src, byte* dst, int width, int height, int newWidth, int newHeight);
+        public static extern unsafe int interpolateAsm(byte* src, byte* dst, int width, int height, int newWidth, int newHeight);
 
         private void button2_Click(object sender, EventArgs e)
         {
