@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -21,8 +22,59 @@ namespace ui
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int number = zwrocNumber();
-            System.Console.WriteLine(number);
+            Image srcImage = Image.FromFile("test.png");
+            int newWidth = 1;
+            int newHeight = 1;
+            Bitmap srcBitmap = new Bitmap(srcImage);
+            Bitmap dstBitmap = new Bitmap(newWidth, newHeight);
+
+            BitmapData srcData = srcBitmap.LockBits(
+                new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height), 
+                ImageLockMode.ReadOnly, 
+                PixelFormat.Format32bppArgb);
+            BitmapData dstData = dstBitmap.LockBits(
+                new Rectangle(0, 0, dstBitmap.Width, dstBitmap.Height), 
+                ImageLockMode.WriteOnly, 
+                PixelFormat.Format32bppArgb);
+            unsafe
+            {
+                byte* srcPtr = (byte*)srcData.Scan0;
+                byte* dstPtr = (byte*)dstData.Scan0;
+                interpolateC(srcPtr, dstPtr, srcBitmap.Width, 
+                    srcBitmap.Height, newWidth, newHeight);
+            }
+            srcBitmap.UnlockBits(srcData);
+            dstBitmap.UnlockBits(dstData);
+            dstBitmap.Save("out.png", ImageFormat.Png);
+            /*
+            Image img = Image.FromFile("test.png");
+            int newWidth = 272;
+            int newHeight = 240;
+            int width = img.Width;
+            int height = img.Height;
+
+            Bitmap dest = new Bitmap(img);
+            //Bitmap dest = new Bitmap(2, 2,PixelFormat.Format32bppArgb);
+
+            unsafe
+            {
+                BitmapData destPixels = dest.LockBits(new Rectangle(0, 0, dest.Width, dest.Height), ImageLockMode.WriteOnly, dest.PixelFormat);
+                byte* ptr = (byte*)destPixels.Scan0;
+                interpolate(ptr);
+                dest.UnlockBits(destPixels);
+                Color piksel = dest.GetPixel(0, 0);
+                dest.Save("test2.jpg", ImageFormat.Jpeg);
+
+                Bitmap jpg = new Bitmap(img);
+                Graphics tmp = Graphics.FromImage(jpg);
+                tmp.DrawImage(dest, new Rectangle(0, 0, 2, 2));
+                piksel = jpg.GetPixel(0, 0);
+                
+                
+               img.Save("test.jpg", ImageFormat.Jpeg);
+                
+
+            }*/
         }
         [DllImport("library_empty.dll")]
         public static extern int returnNumber();
@@ -32,6 +84,8 @@ namespace ui
         public static extern unsafe int zwrocPiksel(byte* src, int width);
         [DllImport("library_empty.dll")]
         public static extern unsafe int interpolate(byte* src);
+        [DllImport("library_empty.dll")]
+        public static extern unsafe int interpolateC(byte* src, byte* dst, int width, int height, int newWidth, int newHeight);
 
         private void button2_Click(object sender, EventArgs e)
         {
