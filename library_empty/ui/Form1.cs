@@ -22,9 +22,9 @@ namespace ui
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Image srcImage = Image.FromFile("test.png");
-            int newWidth = 2;
-            int newHeight = 2;
+            Image srcImage = Image.FromFile("test.jpg");
+            int newWidth = srcImage.Width/2;
+            int newHeight = srcImage.Height/2;
             Bitmap srcBitmap = new Bitmap(srcImage);
             Bitmap dstBitmap = new Bitmap(newWidth, newHeight);
             BitmapData srcData = srcBitmap.LockBits(
@@ -40,8 +40,8 @@ namespace ui
             {
                 byte* srcPtr = (byte*)srcData.Scan0;
                 byte* dstPtr = (byte*)dstData.Scan0;
-                interpolateAsm(srcPtr, dstPtr, 2, 
-                    2, 4, 4);
+                interpolateAsm(srcPtr, dstPtr, srcImage.Width,
+                    srcImage.Height, newWidth, newHeight);
             }
             srcBitmap.UnlockBits(srcData);
             dstBitmap.UnlockBits(dstData);
