@@ -35,10 +35,10 @@ interpolateAsm PROC
 	mov rax, r8						;skopiuj 3. argument do rejestru rax
 	mov [srcWidth], eax				;skopiuj zawartosc rejestru eax do srcWidth
 	mov rax, r9						;skopiuj 4. argument do rejestru rax
-	mov [srcHeight], eax				;skopiuj zawartosc rejestru eax do srcHeight
-	mov eax, [rbp+32]				;skopiuj 5. argument do eax ze stosu
+	mov [srcHeight], eax			;skopiuj zawartosc rejestru eax do srcHeight
+	mov eax, dword ptr[rsp+40]		;skopiuj 5. argument do eax ze stosu
 	mov dstWidth, eax				;skopiuj zawartosc rej. eax do dstWidth
-	mov eax, [rbp+40]				;skopiuj 6. argument do eax ze stosu
+	mov eax, dword ptr[rsp+48]		;skopiuj 6. argument do eax ze stosu
 	mov dstHeight, eax				;skopiuj zawartosc rej. eax do dstHeight
 
 	mov rax, dst
