@@ -1,1 +1,3 @@
-ja repository
+Library to resize an image (byte array) using linear interpolation with sample C# app utilizing it.
+Assembly version of library (libASM) is around 2.5x faster than C++ version.
+Assembly version requires SSE4.1 to use
