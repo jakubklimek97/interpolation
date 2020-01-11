@@ -1,18 +1,15 @@
 .data
-	src qword 0
-	dst qword 0
-	strife qword 0
-	dstStrife qword 0
+	
+	;refRow dword 0
+	;nextRefRow dword 0
+
+
+	
 	srcWidth dword 0
 	srcHeight dword 0
 	dstHeight dword 0
 	dstWidth dword 0
 	zero dword 0
-	comparisonResult dword 0
-	refRow dword 0
-	refCol dword 0
-	nextRefCol dword 0
-	nextRefRow dword 0
 	f256 dword 256
 	f1 dword 1
 .code
@@ -30,8 +27,8 @@ zwrocPiksel ENDP
 
 
 interpolateAsm PROC
-	mov src, rcx					;skopiuj 1. argument do src
-	mov dst, rdx					;skopiuj 2. argument do dst
+	movd xmm5, rcx					;skopiuj 1. argument do [xmm5]
+	movd xmm6, rdx					;skopiuj 2. argument do [xmm6]
 	mov rax, r8						;skopiuj 3. argument do rejestru rax
 	mov [srcWidth], eax				;skopiuj zawartosc rejestru eax do srcWidth
 	mov rax, r9						;skopiuj 4. argument do rejestru rax
@@ -41,20 +38,21 @@ interpolateAsm PROC
 	mov eax, dword ptr[rsp+48]		;skopiuj 6. argument do eax ze stosu
 	mov dstHeight, eax				;skopiuj zawartosc rej. eax do dstHeight
 
-	mov rax, dst
+	movd rax, xmm6
 	sub rax, 4
 	mov rcx, 0
 	mov ecx, dstWidth
 	shl rcx, 2
 	sub rax, rcx
-	mov dst, rax
+	;mov dst, rax
+	movd xmm6, rax
 
-	mov rax, src
+	movd rax, xmm5
 	sub rax, 4
 	mov ecx, srcWidth
 	shl rcx, 2
 	sub rax, rcx
-	mov src, rax
+	movd xmm5, rax
 
 	cvtsi2ss xmm10, dstWidth			;xmm10 = 0 dstWidth
 	cvtsi2ss xmm11, dstHeight		;xmm11 = 0 dstHeight
@@ -78,8 +76,9 @@ row_loop:
 	mov rcx,0					
 	mov ecx, dstWidth			;[edx] = dstWidth
 	shl ecx, 2					;[edx] *= 4
-	mul rcx						;[rax] = row * edx
-	mov dstStrife, rax			; dstStrife = [rax]
+	mul rcx						;[rcx] = row * edx
+	movd xmm7, rax				; dstStrife = [rax]
+	movlhps xmm6, xmm7
 
 
 	;;koniec dodania
@@ -94,12 +93,14 @@ row_loop_1:
 	mov edx, srcHeight
 row_loop_2:
 	cvtsi2ss xmm11, edx			;refRow(xmm11)
-	mov refRow, edx				;save refRow to memory
+	;mov refRow, edx				;save refRow to memory
+	movd xmm14, edx
+	
 	subss xmm10, xmm11			;deltaRow(xmm10) = refRowPos(xmm10) - refRow(xmm11)
 	movss xmm12, xmm10			;isLesserThanZero(xmm12) = deltaRow(xmm10)
 	cmpss xmm12, zero, 1		;isLesserThanZero = deltaRow >= 0
-	movss comparisonResult, xmm12	;comparizonResult = isLesserThanZero
-	cmp comparisonResult, 0
+	movd ecx, xmm12	;			comparizonResult = isLesserThanZero
+	cmp ecx, 0
 	jz row_loop_3				;if comparisonResult == 0 {
 	mov ecx, 0					;ecx = 0
 	cvtsi2ss xmm10, ecx			;deltaRow(xmm10) = ecx
@@ -125,46 +126,68 @@ col_loop_1:						;}
 	mov edx, srcWidth			;	refCol = srcWidth
 col_loop_2:						;}
 	cvtsi2ss xmm8, edx				;[xmm8] = refCol(edx)
-	mov refCol, edx					;refCol(mem) = [edx]
+	;mov refCol, edx					;refCol(mem) = [edx]
+	movd xmm15, edx
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 	subss xmm12, xmm8				;deltaCol(xmm12) -= refCol(xmm8)
 	movss xmm13, xmm12				;[xmm13] = deltaCol(xmm12)
 	cmpss xmm13, zero, 1			;isLesserThanZero(xmm13) = deltaCol >= 0
-	movss comparisonResult, xmm13	;comparisonResult(mem) = [xmm13]
-	cmp comparisonResult, 0			;if comparisonResult == 0
+	movd ecx, xmm13					;comparisonResult(ecx) = [xmm13]
+	cmp ecx, 0						;if comparisonResult == 0
 	jz col_loop_4					;{
 	mov ecx, 0						;	[ecx] = 0
 	cvtsi2ss xmm12, ecx				;	deltaCol(xmm12) = [ecx]
 col_loop_4:							;}
-	
-	mov eax, refCol					;[eax] = refCol(mem)
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	movd eax, xmm15					;[eax] = refCol(mem)
 	cmp eax, srcWidth				;if refCol(eax) < srcWidth
 	jnl col_loop_5					;{
 	add eax, 1						;	[eax] = [eax] + 1 
 col_loop_5:							;}
-	mov nextRefCol, eax				;nextRefCol(mem) = [eax]
-	mov eax, refRow					;[eax] = refRow(mem)
+	;mov nextRefCol, eax				;nextRefCol(mem) = [eax]
+
+	movd xmm7, eax
+	movlhps xmm15, xmm7
+
+
+	;mov eax, refRow					;[eax] = refRow(mem)
+	movd eax, xmm14
+
 	cmp eax, srcHeight				;if refRow(eax) < srcHeight 
 	jnl col_loop_6					;{
 	add eax, 1						;	[eax] = [eax] + 1
 col_loop_6:							;}
-	mov nextRefRow, eax				;rextRefRow(mem) = [eax]
+;	mov nextRefRow, eax				;rextRefRow(mem) = [eax]
+	movd xmm7, eax
+	movlhps xmm14, xmm7
+	
 	mov rax, 0						;[rax] = 0
 	mov eax, srcWidth				;[eax] = srcWidth
 	shl eax, 2						;[rax] << 2 //4 bytes per pixel
 	mov rbx, 0						;[rbx] = 0
-	mov ebx, refRow					;[ebx] = refRow
-	mul rbx							;[rax] = [rax] * [rbx]
-	mov strife, rax					;strife(mem) = [rax]
 
-	mov rax, src					;[rax] = src
-	add rax, strife					;[rax] += strife(mem)
+	;mov ebx, refRow					;[ebx] = refRow
+	movd ebx, xmm14
+
+	mul rbx							;[rax] = [rax] * [rbx]
+	mov rbx, rax					;strife(rbx) = [rax]
+
+	movd rax, xmm5					;[rax] = src
+	add rax, rbx					;[rax] += strife(rbx)
 	mov rbx, 0						;[rbx] = 0
-	mov ebx, refCol					;[ebx] = refCol
+	;mov ebx, refCol					;[ebx] = refCol
+	movd ebx, xmm15
 	shl rbx, 2						;[rbx] << 2
 	movd xmm0, dword ptr[rax+rbx]	;[xmm0] = src[refCol*4 + strife]
 	
 	mov rbx, 0						;[rbx] = 0
-	mov ebx, nextRefCol				;[ebx] = nextRefCol
+
+	movhlps xmm7, xmm15
+	movd ebx, xmm7
+
+	;mov ebx, nextRefCol				;[ebx] = nextRefCol
 	shl rbx, 2						;nextRefCol(ebx) *= 4
 	movd xmm1, dword ptr[rax+rbx]	;[xmm1] = src[nextRefCol*4 + strife]
 	punpckldq xmm0, xmm1			;[xmm0] = 0 0 xmm1[31:0] xmm0[31:0]
@@ -174,19 +197,27 @@ col_loop_6:							;}
 	mov eax, srcWidth				;[eax] = srcWidth
 	shl rax, 2						;srcWidth(eax) *= 4
 	mov rbx, 0						;[rbx] = 0
-	mov ebx, nextRefRow				;[ebx] = nextRefRow
-	mul rbx							;[rax] = [rax] * [rbx]
-	mov strife, rax					;strife(mem) = [rax]
+	;mov ebx, nextRefRow				;[ebx] = nextRefRow
+	movhlps xmm7, xmm14
+	movd ebx, xmm7
 
-	mov rax, src					;[rax] = src
-	add rax, strife					;[rax] += strife(mem)
+	mul rbx							;[rax] = [rax] * [rbx]
+	mov rbx, rax					;strife(rbx) = [rax]
+
+	movd rax, xmm5					;[rax] = src
+	add rax, rbx					;[rax] += strife(rbx)
 	mov rbx, 0						;[rbx] = 0
-	mov ebx, refCol					;[ebx] = refCol
+	;mov ebx, refCol					;[ebx] = refCol
+	movd ebx, xmm15
+
 	shl rbx, 2						;refCol(rbx) *= 4
 	movd xmm1, dword ptr[rax+rbx]	;[xmm1] = src[refCol*4 + strife]
 
 	mov rbx, 0						;[rbx] = 0
-	mov ebx, nextRefCol				;[ebx] = nextRefCol
+	;mov ebx, nextRefCol				;[ebx] = nextRefCol
+	movhlps xmm7, xmm15
+	movd ebx, xmm7
+	
 	shl rbx, 2						;[rbx] *= 4
 	movd xmm2, dword ptr[rax+rbx]	;[xmm2] = src[nextRefCol*4 + strife]
 	punpckldq xmm1, xmm2			;[xmm1] = 0 0 xmm2[31:0] xmm1[31:0]
@@ -243,9 +274,15 @@ col_loop_6:							;}
 	mov rbx, rax					;[rbx] = rax
 	push rax						;col(rax) -> stos
 	shl rbx, 2						;col(rbx) *= 4
-	add rbx, dstStrife				;[rbx] += dstStrife(mem)
-	add rbx, dst					;[rbx] += dst
-	movd dword ptr [rbx], xmm0		;src[col*4 + dstStrife] = [xmm0]
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	movhlps xmm7, xmm6
+	movd rax, xmm6
+	add rbx, rax
+	;add rbx, dstStrife				;[rbx] += dstStrife(mem)
+	movd rax, xmm7
+	add rbx, rax
+	;add rbx, dst					;[rbx] += dst
+	movd dword ptr [rbx], xmm0		;dst[col*4 + dstStrife] = [xmm0]
 
 
 	pop rcx							;[rcx] <- stos(col)
