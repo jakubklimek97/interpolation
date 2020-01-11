@@ -32,17 +32,18 @@
             this.button2 = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.widthBox = new System.Windows.Forms.NumericUpDown();
             this.heightBox = new System.Windows.Forms.NumericUpDown();
+            this.widthBox = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.cRadioBtn = new System.Windows.Forms.RadioButton();
             this.asmRadioBtn = new System.Windows.Forms.RadioButton();
+            this.cRadioBtn = new System.Windows.Forms.RadioButton();
             this.folderLabel = new System.Windows.Forms.Label();
+            this.convertBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.widthBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.heightBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.widthBox)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,23 +84,27 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Rozdzielczosc";
             // 
-            // label1
+            // heightBox
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(57, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Szerokosc";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(7, 46);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(57, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Wysokosc";
+            this.heightBox.Location = new System.Drawing.Point(80, 44);
+            this.heightBox.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.heightBox.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.heightBox.Name = "heightBox";
+            this.heightBox.Size = new System.Drawing.Size(114, 20);
+            this.heightBox.TabIndex = 4;
+            this.heightBox.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // widthBox
             // 
@@ -123,27 +128,23 @@
             0,
             0});
             // 
-            // heightBox
+            // label2
             // 
-            this.heightBox.Location = new System.Drawing.Point(80, 44);
-            this.heightBox.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.heightBox.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.heightBox.Name = "heightBox";
-            this.heightBox.Size = new System.Drawing.Size(114, 20);
-            this.heightBox.TabIndex = 4;
-            this.heightBox.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(7, 46);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(57, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Wysokosc";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(57, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Szerokosc";
             // 
             // groupBox2
             // 
@@ -156,17 +157,6 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Metoda";
             // 
-            // cRadioBtn
-            // 
-            this.cRadioBtn.AutoSize = true;
-            this.cRadioBtn.Location = new System.Drawing.Point(9, 21);
-            this.cRadioBtn.Name = "cRadioBtn";
-            this.cRadioBtn.Size = new System.Drawing.Size(44, 17);
-            this.cRadioBtn.TabIndex = 0;
-            this.cRadioBtn.TabStop = true;
-            this.cRadioBtn.Text = "C++";
-            this.cRadioBtn.UseVisualStyleBackColor = true;
-            // 
             // asmRadioBtn
             // 
             this.asmRadioBtn.AutoSize = true;
@@ -178,6 +168,17 @@
             this.asmRadioBtn.Text = "ASM";
             this.asmRadioBtn.UseVisualStyleBackColor = true;
             // 
+            // cRadioBtn
+            // 
+            this.cRadioBtn.AutoSize = true;
+            this.cRadioBtn.Location = new System.Drawing.Point(9, 21);
+            this.cRadioBtn.Name = "cRadioBtn";
+            this.cRadioBtn.Size = new System.Drawing.Size(44, 17);
+            this.cRadioBtn.TabIndex = 0;
+            this.cRadioBtn.TabStop = true;
+            this.cRadioBtn.Text = "C++";
+            this.cRadioBtn.UseVisualStyleBackColor = true;
+            // 
             // folderLabel
             // 
             this.folderLabel.AutoSize = true;
@@ -187,11 +188,22 @@
             this.folderLabel.TabIndex = 4;
             this.folderLabel.Text = "Wybierz folder zawierający obrazy do przeskalowania";
             // 
+            // convertBtn
+            // 
+            this.convertBtn.Location = new System.Drawing.Point(22, 169);
+            this.convertBtn.Name = "convertBtn";
+            this.convertBtn.Size = new System.Drawing.Size(75, 23);
+            this.convertBtn.TabIndex = 5;
+            this.convertBtn.Text = "Konwertuj";
+            this.convertBtn.UseVisualStyleBackColor = true;
+            this.convertBtn.Click += new System.EventHandler(this.convertBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(296, 261);
+            this.Controls.Add(this.convertBtn);
             this.Controls.Add(this.folderLabel);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -201,8 +213,8 @@
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.widthBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.heightBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.widthBox)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
@@ -224,6 +236,7 @@
         private System.Windows.Forms.RadioButton asmRadioBtn;
         private System.Windows.Forms.RadioButton cRadioBtn;
         private System.Windows.Forms.Label folderLabel;
+        private System.Windows.Forms.Button convertBtn;
     }
 }
 
