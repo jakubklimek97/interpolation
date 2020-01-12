@@ -13,10 +13,10 @@ using System.Windows.Forms;
 
 namespace ui
 {
-    public partial class Form1 : Form
+    public partial class Skalowanie : Form
     {
         List<String> imagesFilePath = new List<String>();
-        public Form1()
+        public Skalowanie()
         {
             InitializeComponent();
         }
@@ -62,8 +62,8 @@ namespace ui
             string extension = fileOnly.Last().Split(new char[] { '.' }).Last();
             string returnFile = String.Join("\\", fileOnly, 0, fileOnly.Count() - 1) + "\\out\\" + fileOnly.Last();
             Image srcImage = Image.FromFile(fileS);
-            int newWidth = srcImage.Width * 16;
-            int newHeight = srcImage.Height * 16;
+            int newWidth = srcImage.Width * 20;
+            int newHeight = srcImage.Height * 20;
             Bitmap srcBitmap = new Bitmap(srcImage);
             Bitmap dstBitmap = new Bitmap(newWidth, newHeight);
             BitmapData srcData = srcBitmap.LockBits(
@@ -79,7 +79,7 @@ namespace ui
             {
                 byte* srcPtr = (byte*)srcData.Scan0;
                 byte* dstPtr = (byte*)dstData.Scan0;
-                interpolateAsm(srcPtr, dstPtr, srcImage.Width,
+                interpolateC(srcPtr, dstPtr, srcImage.Width,
                     srcImage.Height, newWidth, newHeight);
             }
             srcBitmap.UnlockBits(srcData);
@@ -126,6 +126,11 @@ namespace ui
             {
                 thread.Join();
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
