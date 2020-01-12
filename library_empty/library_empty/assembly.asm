@@ -1,12 +1,4 @@
 .data
-	
-	;refRow dword 0
-	;nextRefRow dword 0
-
-
-	
-	srcWidth dword 0
-	srcHeight dword 0
 	dstHeight dword 0
 	dstWidth dword 0
 	zero dword 0
@@ -27,107 +19,109 @@ zwrocPiksel ENDP
 
 
 interpolateAsm PROC
-	movd xmm5, rcx					;skopiuj 1. argument do [xmm5]
-	movd xmm6, rdx					;skopiuj 2. argument do [xmm6]
-	mov rax, r8						;skopiuj 3. argument do rejestru rax
-	mov [srcWidth], eax				;skopiuj zawartosc rejestru eax do srcWidth
-	mov rax, r9						;skopiuj 4. argument do rejestru rax
-	mov [srcHeight], eax			;skopiuj zawartosc rejestru eax do srcHeight
-	mov eax, dword ptr[rsp+40]		;skopiuj 5. argument do eax ze stosu
-	mov dstWidth, eax				;skopiuj zawartosc rej. eax do dstWidth
-	mov eax, dword ptr[rsp+48]		;skopiuj 6. argument do eax ze stosu
-	mov dstHeight, eax				;skopiuj zawartosc rej. eax do dstHeight
+	movd xmm5, rcx								;skopiuj 1. argument (src) do [xmm5]
+	movd xmm6, rdx								;skopiuj 2. argument (dst) do [xmm6]
+	mov rax, r8									;skopiuj 3. argument (srcWidth) do rejestru rax
+	movd xmm7, eax								;xmm7 = srcWidth
+	mov rax, r9									;skopiuj 4. argument (srcHeight) do rejestru rax
+	movd xmm0, eax								;xmm0 = srcHeight
+	movlhps xmm0, xmm7							;xmm0 = srcWidth srcHeight
+	mov eax, dword ptr[rsp+40]					;skopiuj 5. argument (dstWidth) do eax ze stosu
+	mov dstWidth, eax							;skopiuj zawartosc rej. eax do dstWidth
+	mov eax, dword ptr[rsp+48]					;skopiuj 6. argument (dstHeight) do eax ze stosu
+	mov dstHeight, eax							;skopiuj zawartosc rej. eax do dstHeight
+									
+												;sekcja przesuniecia wskaznika dst tak, by wiersze i kolumny zaczynaly sie od 1
+	movd rax, xmm6								;rax = xmm6(dst)
+	sub rax, 4									;rax -= 4 //przesuniecie o 1 piksel
+	mov rcx, 0									;rcx = 0
+	mov ecx, dstWidth							;ecx = dstWidth
+	shl rcx, 2									;ecx << 2 //na kazda 1 kolumne przypadaja 4 wartosci (1 piksel)
+	sub rax, rcx								;rax = rax - rcx				
+	movd xmm6, rax								;xmm6(dst) = rax
+									
+												;sekcja przesuniecia wskaznika src tak, by wiersze i kolumny zaczynaly sie od 1
+	movd rax, xmm5								;rax = xmm5(src)
+	sub rax, 4									;rax -= 4 //przesuniecie o 1 piksel	
+	mov rcx, 0									;rcx = 0
+	movd ecx, xmm7								;ecx = xmm7(srcWidth)
+	shl rcx, 2									;ecx << 2 //na kazda 1 kolumne przypadaja 4 wartosci (1 piksel)
+	sub rax, rcx								;rax = rax - rcx
+	movd xmm5, rax								;xmm5(src) = rax
 
-	movd rax, xmm6
-	sub rax, 4
-	mov rcx, 0
-	mov ecx, dstWidth
-	shl rcx, 2
-	sub rax, rcx
-	;mov dst, rax
-	movd xmm6, rax
+												;ustalenie wspolczynnika skali (xmm9)
+	cvtsi2ss xmm10, dstWidth					;xmm10 = dstWidth
+	cvtsi2ss xmm11, dstHeight					;xmm11 = dstHeight
+	mov rax, 0									;rax = 0
+	movd eax, xmm7								;eax = xmm7(srcWidth)
+	cvtsi2ss xmm8, eax							;xmm8 = eax(srcWidth)
+	movd eax, xmm0								;eax = xmm0(srcHeight)
+	cvtsi2ss xmm9, eax							;xmm9 = eax(srcHeight)
+	
+	unpcklps xmm9, xmm8							;xmm9  = xmm8(srcWidth) xmm9(srcHeight)
+	unpcklps xmm11, xmm10						;xmm11 = xmm10(dstWidth) xmm11(dstHeight)
+	;movups xmm8, xmm9							
+	divps xmm9, xmm11							;xmm9 = srcWidth/dstWidth srcHeight/dstWidth			
 
-	movd rax, xmm5
-	sub rax, 4
-	mov ecx, srcWidth
-	shl rcx, 2
-	sub rax, rcx
-	movd xmm5, rax
-
-	cvtsi2ss xmm10, dstWidth			;xmm10 = 0 dstWidth
-	cvtsi2ss xmm11, dstHeight		;xmm11 = 0 dstHeight
-	cvtsi2ss xmm8, srcWidth			;xmm8 = 0 srcWidth
-	cvtsi2ss xmm9, srcHeight		;xmm9 = 0 srcHeight
-	unpcklps xmm9, xmm8				;xmm9  = srcWidth srcHeight
-	unpcklps xmm11, xmm10			;xmm11 = dstWidth dstHeight
-	movups xmm8, xmm9
-	divps xmm9, xmm11				;xmm9 = srcWidth/dstWidth srcHeight/dstWidth				
-
-	mov rcx, 0
-	mov ecx, 0
-row_loop:
-	add ecx, 1
-	;;;;;;;;;;;;;;
-	mov rax, rcx				;[rax] = row
+	mov rcx, 0									;ecx(row) = 0
+row_loop:										;petla po wierszach zaczyna sie tutaj
+	add ecx, 1									;ecx(row) += 1
+	mov rax, rcx								;rax = rcx(row)
 		
-	cvtsi2ss xmm10, ecx			;refRowPos(xmm10) = row(ecx)
-	push rcx
+	cvtsi2ss xmm10, ecx							;xmm10(refRowPos) = ecx(row)
+	push rcx									;rcx -> stos
 	
-	mov rcx,0					
-	mov ecx, dstWidth			;[edx] = dstWidth
-	shl ecx, 2					;[edx] *= 4
-	mul rcx						;[rcx] = row * edx
-	movd xmm7, rax				; dstStrife = [rax]
-	movlhps xmm6, xmm7
+	mov rcx,0									;rcx = 0
+	mov ecx, dstWidth							;edx = dstWidth
+	shl ecx, 2									;edx << 2 //szerokosc * 4 = ilosc miejsca w pamieci jaka zajmuje wiersz
+	mul rcx										;rcx(dstStrife) = rax(row) * rcx
+	movd xmm7, rax								;xmm7 = rcx(dstStrife)
+	movlhps xmm6, xmm7							;xmm6 = rcx(dstStrife) xmm6L(dst)
 
-
-	;;koniec dodania
-	mulss xmm10, xmm9			;refRowPos *= scaleH(xmm9L)
-	cvttss2si edx, xmm10		;refRow(edx) = floor(refRowPos)
-	cmp edx, 1
-	jnl row_loop_1
-	mov edx, 1
-row_loop_1:
-	cmp edx, srcHeight
-	jng row_loop_2
-	mov edx, srcHeight
+	mulss xmm10, xmm9							;xmm10(refRowPos) *= xmm9L(scaleHeight)
+	cvttss2si edx, xmm10						;refRow(edx) = floor(refRowPos)
+	cmp edx, 1									;if(refRow < 1)
+	jnl row_loop_1								;{
+	mov edx, 1									;	edx(refRow) = 1
+row_loop_1:										;}
+	movd eax, xmm0								;eax = xmm0L(srcHeight)
+	cmp edx, eax								;if(edx(refRow) > eax(srcHeight))
+	jng row_loop_2								;{
+	movd edx, xmm0								;edx(refRow) = xmm0L(srcHeight)
 row_loop_2:
-	cvtsi2ss xmm11, edx			;refRow(xmm11)
-	;mov refRow, edx				;save refRow to memory
-	movd xmm14, edx
+	cvtsi2ss xmm11, edx							;xmm11 = edx(refRow)
+	movd xmm14, edx								;xmm14 = edx(refRow)
 	
-	subss xmm10, xmm11			;deltaRow(xmm10) = refRowPos(xmm10) - refRow(xmm11)
-	movss xmm12, xmm10			;isLesserThanZero(xmm12) = deltaRow(xmm10)
-	cmpss xmm12, zero, 1		;isLesserThanZero = deltaRow >= 0
-	movd ecx, xmm12	;			comparizonResult = isLesserThanZero
-	cmp ecx, 0
-	jz row_loop_3				;if comparisonResult == 0 {
-	mov ecx, 0					;ecx = 0
-	cvtsi2ss xmm10, ecx			;deltaRow(xmm10) = ecx
-row_loop_3:						;}
+	subss xmm10, xmm11							;xmm10(deltaRow) = xmm10(refRowPos) - xmm11(refRow)
+	movss xmm12, xmm10							;xmm12 = xmm10(deltaRow)
+	cmpss xmm12, zero, 1						;xmm12 = xmm12(deltaRow) >= 0
+	movd ecx, xmm12	;							;ecx(comparisonResult) = xmm12
+	cmp ecx, 0									;if(ecx(comparisonResult) == 0)
+	jz row_loop_3								;{
+	mov ecx, 0									;	ecx(deltaRow) = 0
+	cvtsi2ss xmm10, ecx							;   xmm10(deltaRow) = ecx(deltaRow)
+row_loop_3:										;}
+	shufps xmm9, xmm13, 00010001b				;xmm9 = xmm9L(scaleHeight) xmm9H(scaleWidth)
 	
-	shufps xmm9, xmm13, 00010001b ;xmm9 = scaleH scaleW
-
-	mov rcx, 0
-	mov ecx, 0					;col[ecx] = 0
-column_loop:
-	add ecx, 1					;col++
-
-	cvtsi2ss xmm12, ecx			;refColPos(xmm12) = col(ecx)
-	push rcx
-	mulss xmm12, xmm9			;refColPos[xmm12] = refColPos* scaleW
-	cvttss2si edx, xmm12		;refCol[edx] = floor(refColPos)
-	cmp edx, 1					;if(refCol < 1)
-	jnl col_loop_1				;{
-	mov edx, 1					;	refCol = 1
-col_loop_1:						;}
-	cmp edx, srcWidth			;if(refCol > srcWidth)
-	jng col_loop_2				;{
-	mov edx, srcWidth			;	refCol = srcWidth
-col_loop_2:						;}
-	cvtsi2ss xmm8, edx				;[xmm8] = refCol(edx)
-	;mov refCol, edx					;refCol(mem) = [edx]
-	movd xmm15, edx
+	mov rcx, 0									;rcx(col) = 0;
+column_loop:									;petla po kolumnach zaczyna sie tutaj
+	add ecx, 1									;ecx(col) += 1
+	cvtsi2ss xmm12, ecx							;xmm12(refColPos) = ecx(col)
+	push rcx									;rcx -> stos
+	mulss xmm12, xmm9							;xmm12(refColPos)= xmm12(refColPos) * xmm9L(scaleWidth)
+	cvttss2si edx, xmm12						;edx(refCol) = floor(xmm12(refColPos))
+	cmp edx, 1									;if(edx(refCol) < 1)
+	jnl col_loop_1								;{
+	mov edx, 1									;	refCol = 1
+col_loop_1:										;}
+	movhlps xmm7, xmm0							;xmm7 = xmm0H(srcWidth)
+	movd eax, xmm7								;eax = xmm7(srcWidth)
+	cmp edx, eax								;if(edx(refCol) > eax(srcWidth))
+	jng col_loop_2								;{
+	mov edx, eax								;	edx(refCol) = eax(srcWidth)
+col_loop_2:										;}
+	cvtsi2ss xmm8, edx							;xmm8 = edx(refCol)
+	movd xmm15, edx								;xmm15 = edx(refCol)
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -141,8 +135,11 @@ col_loop_2:						;}
 	cvtsi2ss xmm12, ecx				;	deltaCol(xmm12) = [ecx]
 col_loop_4:							;}
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	movhlps xmm7, xmm0
+	movd edx, xmm7					;[edx] = srcWidth
+
 	movd eax, xmm15					;[eax] = refCol(mem)
-	cmp eax, srcWidth				;if refCol(eax) < srcWidth
+	cmp eax, edx					;if refCol(eax) < srcWidth
 	jnl col_loop_5					;{
 	add eax, 1						;	[eax] = [eax] + 1 
 col_loop_5:							;}
@@ -155,7 +152,8 @@ col_loop_5:							;}
 	;mov eax, refRow					;[eax] = refRow(mem)
 	movd eax, xmm14
 
-	cmp eax, srcHeight				;if refRow(eax) < srcHeight 
+	movd edx, xmm0
+	cmp eax, edx				;if refRow(eax) < srcHeight 
 	jnl col_loop_6					;{
 	add eax, 1						;	[eax] = [eax] + 1
 col_loop_6:							;}
@@ -164,7 +162,9 @@ col_loop_6:							;}
 	movlhps xmm14, xmm7
 	
 	mov rax, 0						;[rax] = 0
-	mov eax, srcWidth				;[eax] = srcWidth
+	movhlps xmm7, xmm0
+	movd eax, xmm7
+	;mov eax, srcWidth				;[eax] = srcWidth
 	shl eax, 2						;[rax] << 2 //4 bytes per pixel
 	mov rbx, 0						;[rbx] = 0
 
@@ -180,6 +180,8 @@ col_loop_6:							;}
 	;mov ebx, refCol					;[ebx] = refCol
 	movd ebx, xmm15
 	shl rbx, 2						;[rbx] << 2
+
+	movapd xmm8, xmm0
 	movd xmm0, dword ptr[rax+rbx]	;[xmm0] = src[refCol*4 + strife]
 	
 	mov rbx, 0						;[rbx] = 0
@@ -194,7 +196,10 @@ col_loop_6:							;}
 
 
 	mov rax, 0						;[rax] = 0				
-	mov eax, srcWidth				;[eax] = srcWidth
+	;mov eax, srcWidth				;[eax] = srcWidth
+	movhlps xmm7, xmm8
+	movd eax, xmm7
+	
 	shl rax, 2						;srcWidth(eax) *= 4
 	mov rbx, 0						;[rbx] = 0
 	;mov ebx, nextRefRow				;[ebx] = nextRefRow
@@ -284,7 +289,7 @@ col_loop_6:							;}
 	;add rbx, dst					;[rbx] += dst
 	movd dword ptr [rbx], xmm0		;dst[col*4 + dstStrife] = [xmm0]
 
-
+	movapd xmm0, xmm8				;[xmm0] = srcWidth srcHeight
 	pop rcx							;[rcx] <- stos(col)
 	cmp ecx, dstWidth				;if col(ecx) < dstWidth {
 	jl column_loop					;	skoncz na pocz¹tek pêtli }

@@ -63,7 +63,7 @@ namespace ui
             string returnFile = String.Join("\\", fileOnly, 0, fileOnly.Count() - 1) + "\\out\\" + fileOnly.Last();
             Image srcImage = Image.FromFile(fileS);
             int newWidth = srcImage.Width * 16;
-            int newHeight = srcImage.Height * 8;
+            int newHeight = srcImage.Height * 16;
             Bitmap srcBitmap = new Bitmap(srcImage);
             Bitmap dstBitmap = new Bitmap(newWidth, newHeight);
             BitmapData srcData = srcBitmap.LockBits(
