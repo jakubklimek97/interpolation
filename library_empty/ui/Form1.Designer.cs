@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.sourceSelectBtn = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.heightBox = new System.Windows.Forms.NumericUpDown();
@@ -39,15 +39,16 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.asmRadioBtn = new System.Windows.Forms.RadioButton();
             this.cRadioBtn = new System.Windows.Forms.RadioButton();
-            this.folderLabel = new System.Windows.Forms.Label();
+            this.infoLabel = new System.Windows.Forms.Label();
             this.convertBtn = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.button3 = new System.Windows.Forms.Button();
+            this.destBtn = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.folderRadioButton = new System.Windows.Forms.RadioButton();
+            this.filesRadioButton = new System.Windows.Forms.RadioButton();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.fileSelectDIalog = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.heightBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthBox)).BeginInit();
@@ -65,15 +66,15 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // sourceSelectBtn
             // 
-            this.button2.Location = new System.Drawing.Point(3, 140);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(127, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Wybierz pliki/folder";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.sourceSelectBtn.Location = new System.Drawing.Point(3, 140);
+            this.sourceSelectBtn.Name = "sourceSelectBtn";
+            this.sourceSelectBtn.Size = new System.Drawing.Size(127, 23);
+            this.sourceSelectBtn.TabIndex = 1;
+            this.sourceSelectBtn.Text = "Wybierz pliki/folder";
+            this.sourceSelectBtn.UseVisualStyleBackColor = true;
+            this.sourceSelectBtn.Click += new System.EventHandler(this.selectSource);
             // 
             // folderBrowserDialog1
             // 
@@ -188,14 +189,14 @@
             this.cRadioBtn.Text = "C++";
             this.cRadioBtn.UseVisualStyleBackColor = true;
             // 
-            // folderLabel
+            // infoLabel
             // 
-            this.folderLabel.AutoSize = true;
-            this.folderLabel.Location = new System.Drawing.Point(12, 21);
-            this.folderLabel.Name = "folderLabel";
-            this.folderLabel.Size = new System.Drawing.Size(257, 13);
-            this.folderLabel.TabIndex = 4;
-            this.folderLabel.Text = "Wybierz folder zawierający obrazy do przeskalowania";
+            this.infoLabel.AutoSize = true;
+            this.infoLabel.Location = new System.Drawing.Point(12, 21);
+            this.infoLabel.Name = "infoLabel";
+            this.infoLabel.Size = new System.Drawing.Size(257, 13);
+            this.infoLabel.TabIndex = 4;
+            this.infoLabel.Text = "Wybierz folder zawierający obrazy do przeskalowania";
             // 
             // convertBtn
             // 
@@ -215,20 +216,20 @@
             this.progressBar1.TabIndex = 6;
             this.progressBar1.Value = 25;
             // 
-            // button3
+            // destBtn
             // 
-            this.button3.Location = new System.Drawing.Point(136, 140);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(124, 23);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "Folder docelowy";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.destBtn.Location = new System.Drawing.Point(136, 140);
+            this.destBtn.Name = "destBtn";
+            this.destBtn.Size = new System.Drawing.Size(124, 23);
+            this.destBtn.TabIndex = 7;
+            this.destBtn.Text = "Folder docelowy";
+            this.destBtn.UseVisualStyleBackColor = true;
+            this.destBtn.Click += new System.EventHandler(this.destBtn_Click);
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.radioButton2);
-            this.groupBox3.Controls.Add(this.radioButton1);
+            this.groupBox3.Controls.Add(this.folderRadioButton);
+            this.groupBox3.Controls.Add(this.filesRadioButton);
             this.groupBox3.Location = new System.Drawing.Point(15, 56);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(71, 78);
@@ -236,27 +237,27 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Pliki/folder";
             // 
-            // radioButton1
+            // folderRadioButton
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(7, 20);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(44, 17);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Pliki";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.folderRadioButton.AutoSize = true;
+            this.folderRadioButton.Location = new System.Drawing.Point(7, 44);
+            this.folderRadioButton.Name = "folderRadioButton";
+            this.folderRadioButton.Size = new System.Drawing.Size(54, 17);
+            this.folderRadioButton.TabIndex = 1;
+            this.folderRadioButton.Text = "Folder";
+            this.folderRadioButton.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // filesRadioButton
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(7, 44);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(54, 17);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Folder";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.filesRadioButton.AutoSize = true;
+            this.filesRadioButton.Checked = true;
+            this.filesRadioButton.Location = new System.Drawing.Point(7, 20);
+            this.filesRadioButton.Name = "filesRadioButton";
+            this.filesRadioButton.Size = new System.Drawing.Size(44, 17);
+            this.filesRadioButton.TabIndex = 0;
+            this.filesRadioButton.TabStop = true;
+            this.filesRadioButton.Text = "Pliki";
+            this.filesRadioButton.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -276,6 +277,12 @@
             this.label4.TabIndex = 10;
             this.label4.Text = "Ilość wątków: 4";
             // 
+            // fileSelectDIalog
+            // 
+            this.fileSelectDIalog.FileName = "fileSelectDIalog";
+            this.fileSelectDIalog.Filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG";
+            this.fileSelectDIalog.Multiselect = true;
+            // 
             // Skalowanie
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -284,13 +291,13 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.destBtn);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.convertBtn);
-            this.Controls.Add(this.folderLabel);
+            this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.sourceSelectBtn);
             this.Name = "Skalowanie";
             this.Text = "Skalowanie";
             this.groupBox1.ResumeLayout(false);
@@ -309,7 +316,7 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button sourceSelectBtn;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.NumericUpDown heightBox;
@@ -319,15 +326,16 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton asmRadioBtn;
         private System.Windows.Forms.RadioButton cRadioBtn;
-        private System.Windows.Forms.Label folderLabel;
+        private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Button convertBtn;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button destBtn;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton folderRadioButton;
+        private System.Windows.Forms.RadioButton filesRadioButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.OpenFileDialog fileSelectDIalog;
     }
 }
 
