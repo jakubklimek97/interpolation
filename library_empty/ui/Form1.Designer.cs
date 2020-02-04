@@ -98,7 +98,7 @@
             // 
             this.heightBox.Location = new System.Drawing.Point(80, 44);
             this.heightBox.Maximum = new decimal(new int[] {
-            1000000000,
+            65534,
             0,
             0,
             0});
@@ -111,7 +111,7 @@
             this.heightBox.Size = new System.Drawing.Size(114, 20);
             this.heightBox.TabIndex = 4;
             this.heightBox.Value = new decimal(new int[] {
-            1,
+            1000,
             0,
             0,
             0});
@@ -120,7 +120,7 @@
             // 
             this.widthBox.Location = new System.Drawing.Point(80, 18);
             this.widthBox.Maximum = new decimal(new int[] {
-            1000000000,
+            65534,
             0,
             0,
             0});
@@ -133,7 +133,7 @@
             this.widthBox.Size = new System.Drawing.Size(114, 20);
             this.widthBox.TabIndex = 3;
             this.widthBox.Value = new decimal(new int[] {
-            1,
+            1000,
             0,
             0,
             0});
@@ -170,6 +170,7 @@
             // asmRadioBtn
             // 
             this.asmRadioBtn.AutoSize = true;
+            this.asmRadioBtn.Checked = true;
             this.asmRadioBtn.Location = new System.Drawing.Point(9, 45);
             this.asmRadioBtn.Name = "asmRadioBtn";
             this.asmRadioBtn.Size = new System.Drawing.Size(48, 17);
@@ -185,7 +186,6 @@
             this.cRadioBtn.Name = "cRadioBtn";
             this.cRadioBtn.Size = new System.Drawing.Size(44, 17);
             this.cRadioBtn.TabIndex = 0;
-            this.cRadioBtn.TabStop = true;
             this.cRadioBtn.Text = "C++";
             this.cRadioBtn.UseVisualStyleBackColor = true;
             // 
@@ -200,6 +200,7 @@
             // 
             // convertBtn
             // 
+            this.convertBtn.Enabled = false;
             this.convertBtn.Location = new System.Drawing.Point(266, 140);
             this.convertBtn.Name = "convertBtn";
             this.convertBtn.Size = new System.Drawing.Size(110, 23);
@@ -213,8 +214,8 @@
             this.progressBar1.Location = new System.Drawing.Point(3, 169);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(373, 23);
+            this.progressBar1.Step = 1;
             this.progressBar1.TabIndex = 6;
-            this.progressBar1.Value = 25;
             // 
             // destBtn
             // 
