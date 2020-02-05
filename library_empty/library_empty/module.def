@@ -1,6 +1,4 @@
 LIBRARY
 EXPORTS
-zwrocNumber
-zwrocPiksel
 interpolateAsm
 checkForSSE

@@ -5,17 +5,6 @@
 	f256 dword 256								;zdefiniowane 256
 	f1 dword 1									;zdefiniowana 1
 .code
-zwrocNumber PROC
-	mov rax, 5
-	ret
-zwrocNumber ENDP
-
-zwrocPiksel PROC
-	mov rax, 0
-	mov al, byte ptr[rcx]
-	ret
-zwrocPiksel ENDP
-	
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	Funkcja skaluje obraz wykorzystujac metode interpolacji dwuliniowej

@@ -46,8 +46,8 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.folderRadioButton = new System.Windows.Forms.RadioButton();
             this.filesRadioButton = new System.Windows.Forms.RadioButton();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.coreLabel = new System.Windows.Forms.Label();
+            this.threadLabel = new System.Windows.Forms.Label();
             this.fileSelectDIalog = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.heightBox)).BeginInit();
@@ -64,7 +64,6 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // sourceSelectBtn
             // 
@@ -260,23 +259,23 @@
             this.filesRadioButton.Text = "Pliki";
             this.filesRadioButton.UseVisualStyleBackColor = true;
             // 
-            // label3
+            // coreLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(286, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(72, 13);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "Ilość rdzeni: 2";
+            this.coreLabel.AutoSize = true;
+            this.coreLabel.Location = new System.Drawing.Point(286, 9);
+            this.coreLabel.Name = "coreLabel";
+            this.coreLabel.Size = new System.Drawing.Size(66, 13);
+            this.coreLabel.TabIndex = 9;
+            this.coreLabel.Text = "Ilość rdzeni: ";
             // 
-            // label4
+            // threadLabel
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(286, 31);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(81, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "Ilość wątków: 4";
+            this.threadLabel.AutoSize = true;
+            this.threadLabel.Location = new System.Drawing.Point(286, 31);
+            this.threadLabel.Name = "threadLabel";
+            this.threadLabel.Size = new System.Drawing.Size(75, 13);
+            this.threadLabel.TabIndex = 10;
+            this.threadLabel.Text = "Ilość wątków: ";
             // 
             // fileSelectDIalog
             // 
@@ -289,8 +288,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(379, 197);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.threadLabel);
+            this.Controls.Add(this.coreLabel);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.destBtn);
             this.Controls.Add(this.progressBar1);
@@ -334,8 +333,8 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.RadioButton folderRadioButton;
         private System.Windows.Forms.RadioButton filesRadioButton;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label coreLabel;
+        private System.Windows.Forms.Label threadLabel;
         private System.Windows.Forms.OpenFileDialog fileSelectDIalog;
     }
 }
