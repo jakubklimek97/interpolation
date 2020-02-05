@@ -3,13 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+///////////////////////////////////////////////////////////
+/*
+* Autor: Jakub Klimek
+* Informatyka
+* Semestr: 5
+* Grupa dziekanska: 1-2
+*
+* Temat: Program zmieniający rozdzielczość wielu zdjęć 
+*		 do wybranego rozmiaru
+*/
+///////////////////////////////////////////////////////////
 namespace ui
 {
     static class Program
     {
 
-        [System.Runtime.InteropServices.DllImport("library_empty.dll")]
+        [System.Runtime.InteropServices.DllImport("interpolationLibrary.dll")]
         public static extern bool checkForSSE();
         /// <summary>
         /// The main entry point for the application.

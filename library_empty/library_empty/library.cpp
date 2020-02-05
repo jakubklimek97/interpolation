@@ -9,7 +9,8 @@
 * Semestr: 5
 * Grupa dziekanska: 1-2
 *
-* Temat: 
+* Temat: Program zmieniaj¹cy rozdzielczoœæ wielu zdjêæ 
+*		 do wybranego rozmiaru
 */
 ///////////////////////////////////////////////////////////
 

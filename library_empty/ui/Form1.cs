@@ -10,7 +10,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+///////////////////////////////////////////////////////////
+/*
+* Autor: Jakub Klimek
+* Informatyka
+* Semestr: 5
+* Grupa dziekanska: 1-2
+*
+* Temat: Program zmieniający rozdzielczość wielu zdjęć 
+*		 do wybranego rozmiaru
+*/
+///////////////////////////////////////////////////////////
 namespace ui
 {
      public partial class Skalowanie : Form
@@ -55,9 +65,9 @@ namespace ui
         }
         
         //funkcje wykorzystywane z biblioteki      
-        [DllImport("library_empty.dll")]
+        [DllImport("interpolationLibrary.dll")]
         public static extern unsafe int interpolateC(byte* src, byte* dst, int width, long height, long newWidth, long newHeight);
-        [DllImport("library_empty.dll")]
+        [DllImport("interpolationLibrary.dll")]
         public static extern unsafe int interpolateAsm(byte* src, byte* dst, int width, long height, long newWidth, long newHeight);
         
  
@@ -114,7 +124,7 @@ namespace ui
                         //Załaduj obraz z dysku do pamięci
                         srcImage = Image.FromFile(src);
                     }
-                    catch (OutOfMemoryException ex)
+                    catch (OutOfMemoryException)
                     {
                         //Jeżeli się nie udało, przypisz null
                         srcImage = null;
@@ -127,7 +137,7 @@ namespace ui
                         //Załaduj bitmapę z obrazu źródłowego
                         srcBitmap = new Bitmap(srcImage);
                     }
-                    catch(Exception ex)
+                    catch(Exception)
                     {
                         //Jeżeli się nie udało, przypisz null
                         srcBitmap = null;
@@ -140,7 +150,7 @@ namespace ui
                         //Utworz bitmapę na obraz docelowy
                         dstBitmap = new Bitmap(dstWidth, dstHeight);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         //Jeżeli się nie udało, przypisz null
                         dstBitmap = null;
@@ -199,7 +209,7 @@ namespace ui
                 //Zapis docelowego obrazu do pliku
                 dstBitmap.Save(dst, format);
             }
-            catch(ExternalException ex)
+            catch(ExternalException)
             {
                 MessageBox.Show("Nie mozna zapisac do pliku\n" + dst);
             }
@@ -242,6 +252,12 @@ namespace ui
         //Funkcja wywoływana po naciśnięciu przycisku "Skaluj"
         private void convertBtn_Click(object sender, EventArgs e)
         {
+            //Jeżeli nie wybrano obrazow
+            if(selectedImages.Count == 0)
+            {
+                //Nie rób nic
+                return;
+            }
             //Ustawienie liczby pracujących wątków na dostępne wątki
             ThreadPool.SetMinThreads(1, 1);
             ThreadPool.SetMaxThreads(threadCount, threadCount);
@@ -276,7 +292,7 @@ namespace ui
                 //Sprawdzenie, czy można zaalokować wystarczająco pamięci na obrazek docelowy
                 tempDst = new Bitmap((int)widthBox.Value, (int)heightBox.Value);
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 MessageBox.Show("Nie można zaalokować pamięci na obrazek docelowy.");
                 //Jeżeli nie można, nie ma sensu liczyć dalej
@@ -334,7 +350,7 @@ namespace ui
                                         //Spróbuj utworzyć katalog docelowy
                                         System.IO.Directory.CreateDirectory(dstDir);
                                     }
-                                    catch (UnauthorizedAccessException ex)
+                                    catch (UnauthorizedAccessException)
                                     {
                                         //Jeżeli jest to niemożliwe, wyświetl odpowiedni komunikat i zakończ
                                         MessageBox.Show("Nie mam uprawnien do utworzenia katalogu out...");
@@ -363,7 +379,7 @@ namespace ui
                         
 
                     }
-                    catch (Exception ex) //łapiemy out of memory i przy tworzeniu bitmapy
+                    catch (Exception) //łapiemy out of memory i przy tworzeniu bitmapy
                     {
                         //nic nie robimy, po prostu na koniec obsluzymy mniej obrazow;
                     }
@@ -436,7 +452,7 @@ namespace ui
                                 //Jeżeli się udało, dodaj do listy obrazów do przetworzenia
                                 selectedImages.Add(file);
                             }
-                            catch (OutOfMemoryException ex)
+                            catch (OutOfMemoryException)
                             {
                                 //Jezeli to nie obraz, to nie dodawaj do listy
                             }
@@ -495,7 +511,7 @@ namespace ui
                                 //Jeżeli się udało, dodaj do listy obrazów do przetworzenia
                                 selectedImages.Add(file);
                             }
-                            catch (OutOfMemoryException ex)
+                            catch (OutOfMemoryException)
                             {
                                 //Jezeli to nie obraz, to nie dodawaj do listy
                             }

@@ -168,7 +168,6 @@ col_loop_6:										;}
 	movd rax, xmm5								;rax = xmm5(src)
 	add rax, rbx								;rax(src) += strife(rbx)
 	mov rbx, 0									;rbx = 0
-	;mov ebx, refCol						;[ebx] = refCol;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	movd ebx, xmm15								;ebx = xmm15(refCol)
 	shl rbx, 2									;rbx << 2
 
@@ -180,20 +179,17 @@ col_loop_6:										;}
 	movhlps xmm7, xmm15							;xmm7 = xmm15H(nextRefCol)
 	movd ebx, xmm7								;ebx = xmm7(nextRefCol)
 
-	;mov ebx, nextRefCol				;[ebx] = nextRefCol;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	shl rbx, 2									;nextRefCol(ebx) *= 4
 	movd xmm1, dword ptr[rax+rbx]				;xmm1 = src[ebx(nextRefCol*4) + strife]
 	punpckldq xmm0, xmm1						;xmm0 = 0 0 xmm1[31:0] xmm0[31:0]
 
 
 	mov rax, 0									;rax = 0				
-	;mov eax, srcWidth				;[eax] = srcWidth;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	movhlps xmm7, xmm8							;xmm7 = xmm8H(srcWidth)
 	movd eax, xmm7								;eax = xmm7(srcWidth)
 	
 	shl rax, 2									;eax(srcWidth) *= 4
 	mov rbx, 0									;rbx = 0
-	;mov ebx, nextRefRow				;[ebx] = nextRefRow;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	movhlps xmm7, xmm14							;xmm7 = xmm14H(nextRefRow)
 	movd ebx, xmm7								;ebx = xmm7(nextRefRow)
 
@@ -203,14 +199,12 @@ col_loop_6:										;}
 	movd rax, xmm5								;rax = xmm5(src)
 	add rax, rbx								;rax += rbx(strife)
 	mov rbx, 0									;rbx = 0
-	;mov ebx, refCol					;[ebx] = refCol;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	movd ebx, xmm15								;ebx = xmm15L(refCol)
 
 	shl rbx, 2									;rbx(refCol) *= 4
 	movd xmm1, dword ptr[rax+rbx]				;xmm1 = src[refCol*4 + strife]
 
 	mov rbx, 0									;rbx = 0
-	;mov ebx, nextRefCol				;[ebx] = nextRefCol;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	movhlps xmm7, xmm15							;xmm7 = xmm15H(nextRefCol)
 	movd ebx, xmm7								;ebx = xmm7(nextRefCol)
 	
@@ -274,10 +268,8 @@ col_loop_6:										;}
 	movhlps xmm7, xmm6							;xmm7 = xmm6H(dstStrife)
 	movd rax, xmm6								;rax = xmm6(dst)
 	add rbx, rax								;rbx = rax(dst) + rbx(col*4)
-	;add rbx, dstStrife				;[rbx] += dstStrife(mem);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	movd rax, xmm7								;rax = xmm7(dstStrife)
 	add rbx, rax								;rbx = dst + dstStrife + col*4 - pozycja docelowego pikselu w pamieci
-	;add rbx, dst					;[rbx] += dst;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	movd dword ptr [rbx], xmm0					;dst[col*4 + dstStrife] = xmm0
 
 	movapd xmm0, xmm8							;xmm0 = xmm8(srcWidth srcHeight)
@@ -307,8 +299,8 @@ checkForSSE PROC
 	cpuid										;pobranie informacji o procesorze
 	shr ecx, 19									;przesuniecie ecx w taki sposob, zeby sse4.1 bylo na bicie 0
 	and ecx, 1									;ecx = ecx & sse4.1bit
-	mov eax, ecx
-	ret
+	mov eax, ecx								;eax = ecx
+	ret											;zwrócenie przez ecx wartoœci bitu SSE4.1
 checkForSSE ENDP
 
 end
